@@ -55,6 +55,27 @@ describe('ArbCalculator', () => {
     });
   });
 
+  // Test 2b: World Cup Matcher
+  describe('World Cup Matcher', () => {
+    test('identifies World Cup categories by slug starting with fifwc or containing world-cup', () => {
+      const category1 = { title: 'Some Match', slug: 'fifwc-can-bih-2026-06-12' };
+      const category2 = { title: 'Another Match', slug: 'world-cup-2026' };
+      const category3 = { title: 'La Liga Match', slug: 'real-madrid-vs-barcelona' };
+
+      expect(ArbCalculator.isWorldCup(category1)).toBe(true);
+      expect(ArbCalculator.isWorldCup(category2)).toBe(true);
+      expect(ArbCalculator.isWorldCup(category3)).toBe(false);
+    });
+
+    test('identifies World Cup categories by title containing world cup', () => {
+      const category1 = { title: 'FIFA World Cup Final', slug: 'soccer-match-123' };
+      const category2 = { title: 'Standard Soccer Match', slug: 'soccer-match-456' };
+
+      expect(ArbCalculator.isWorldCup(category1)).toBe(true);
+      expect(ArbCalculator.isWorldCup(category2)).toBe(false);
+    });
+  });
+
   // Test 3: Liquidity Score Calculation
   describe('Liquidity Score Calculation', () => {
     test('calculates 100 for high liquidity and low spread', () => {

@@ -153,3 +153,13 @@ To prevent configuration inconsistencies and protect credentials:
 ### 8. Direct Status-Filtering API Optimization
 
 Instead of fetching all categories (which includes thousands of inactive/resolved categories), the frontend now appends `status=OPEN` to the query. This optimization reduces the paginated fetch payload from 1500+ categories to under 400, resulting in 4x faster page loads and dramatically lower memory usage.
+
+### 9. Client-Side Soccer and World Cup Post-Filtering
+
+To prevent World Cup matches (with `fifwc-` in their slugs) from bleeding into domestic Soccer Leagues (tag `14`), and to prevent selecting "World Cup 2026" (tag `81`) from returning empty results due to the API's categorization behavior:
+
+- **Solution**: Any dropdown selection of Soccer Leagues (`14`), World Cup 2026 (`81`), or Soccer & World Cup (`14,81,113`) triggers a query for `tagIds=14,81,113` under the hood. The scanner then applies client-side post-filtering using `ArbCalculator.isWorldCup(category)` to segregate the categories:
+  - **World Cup 2026** shows only matches matching the World Cup criteria.
+  - **Soccer Leagues** shows only matches excluding the World Cup criteria.
+  - **Soccer & World Cup** displays both.
+

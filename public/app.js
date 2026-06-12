@@ -365,9 +365,16 @@ async function performScan() {
       'x-network': appState.selectedNetwork
     };
 
+    // Determine actual tag query to send to backend
+    let tagQuery = appState.filters.tagIds;
+    const isSoccerOrWorldCupFilter = ['14', '81', '14,81,113'].includes(tagQuery);
+    if (isSoccerOrWorldCupFilter) {
+      tagQuery = '14,81,113';
+    }
+
     let fetchUrl = `/api/all-categories?network=${appState.selectedNetwork}&status=OPEN`;
-    if (appState.filters.tagIds !== 'all') {
-      fetchUrl += `&tagIds=${appState.filters.tagIds}`;
+    if (tagQuery !== 'all') {
+      fetchUrl += `&tagIds=${tagQuery}`;
     }
     const response = await fetch(fetchUrl, { headers });
     const result = await response.json();
@@ -376,7 +383,24 @@ async function performScan() {
       throw new Error(result.message || 'API fetch failed');
     }
 
-    appState.categories = result.data || [];
+    // Post-filter categories client-side to segregate World Cup from Soccer Leagues
+    let fetchedCategories = result.data || [];
+    if (isSoccerOrWorldCupFilter) {
+      fetchedCategories = fetchedCategories.filter((category) => {
+        const isWC = ArbCalculator.isWorldCup(category);
+        if (appState.filters.tagIds === '81') {
+          // World Cup 2026: only keep World Cup matches
+          return isWC;
+        } else if (appState.filters.tagIds === '14') {
+          // Soccer Leagues: exclude World Cup matches
+          return !isWC;
+        }
+        // Soccer & World Cup (14,81,113): keep both
+        return true;
+      });
+    }
+
+    appState.categories = fetchedCategories;
     calculateOpportunities();
     renderAll();
 

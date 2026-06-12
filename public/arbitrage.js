@@ -49,6 +49,13 @@ const ArbCalculator = {
     return !!(hasKeywords || hasSportsTag);
   },
 
+  // Check if a category represents a World Cup match
+  isWorldCup(category) {
+    const slug = (category.slug || '').toLowerCase();
+    const title = (category.title || '').toLowerCase();
+    return slug.startsWith('fifwc') || slug.includes('world-cup') || title.includes('world cup');
+  },
+
   // Parse YES outcome from a market
   getYesOutcome(market) {
     if (!market.outcomes || market.outcomes.length === 0) return null;

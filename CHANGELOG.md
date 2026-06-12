@@ -16,11 +16,13 @@ This release focuses on transitioning the repository to production-grade reposit
 - **Unit Testing**: Implemented a comprehensive test suite in [tests/arbitrage.test.js](file:///Users/joe/Dev/Betfarm/tests/arbitrage.test.js) using **Jest** to test name parsers, sports category recognition, and multi-leg calculations.
 - **Developer Tooling**: Configured `.eslintrc.json`, `.eslintignore`, `.prettierrc`, `.prettierignore`, and `.gitignore`.
 - **Open Source Documentation**: Added [README.md](file:///Users/joe/Dev/Betfarm/README.md), [CONTRIBUTING.md](file:///Users/joe/Dev/Betfarm/CONTRIBUTING.md), [CHANGELOG.md](file:///Users/joe/Dev/Betfarm/CHANGELOG.md), and [docs/ARCHITECTURE.md](file:///Users/joe/Dev/Betfarm/docs/ARCHITECTURE.md).
+- **World Cup & Soccer Segregation**: Added client-side post-filtering and classification in `ArbCalculator` to isolate World Cup games (starts with `fifwc-` in slug or contains `world-cup`/`world cup`) from Soccer Leagues filters.
 
 ### Changed
 
 - **Folder Restructuring**: Moved the backend server from root `server.js` to [src/server.js](file:///Users/joe/Dev/Betfarm/src/server.js) and updated relative assets path resolutions.
 - **Environment Handling**: Updated default configuration variable values to run strictly on BNB Mainnet by default.
+- **Query Aggregation**: Rewrote single-tag requests (`tagIds=14` and `tagIds=81`) to retrieve the combined `14,81,113` dataset from Predict.fun API, avoiding the empty pages bug on tag `81` while enabling post-filtering.
 
 ---
 
