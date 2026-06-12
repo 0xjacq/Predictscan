@@ -304,7 +304,7 @@ function showToastNotification(opp) {
 
   container.appendChild(toast);
 
-  // Auto remove after 6 seconds
+  // Auto remove after 1 minute (60 seconds)
   setTimeout(() => {
     if (toast.parentNode) {
       toast.style.opacity = '0';
@@ -313,7 +313,7 @@ function showToastNotification(opp) {
         toast.remove();
       }, 500);
     }
-  }, 6000);
+  }, 60000);
 }
 
 function checkNewOpportunitiesAlert() {
@@ -452,7 +452,15 @@ function getFilteredOpportunities() {
 
   // Sort dynamically based on selected criteria
   return filtered.sort((a, b) => {
-    if (appState.filters.sortBy === 'liquidity') {
+    if (appState.filters.sortBy === 'kickoff') {
+      // Sort chronologically ascending (soonest kickoff time first)
+      const timeA = a.startsAt ? new Date(a.startsAt).getTime() : Infinity;
+      const timeB = b.startsAt ? new Date(b.startsAt).getTime() : Infinity;
+      if (timeA !== timeB) {
+        return timeA - timeB;
+      }
+      return b.profitPct - a.profitPct; // Tie-breaker: Profit %
+    } else if (appState.filters.sortBy === 'liquidity') {
       if (b.liquidityScore !== a.liquidityScore) {
         return b.liquidityScore - a.liquidityScore;
       }
