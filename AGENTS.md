@@ -14,6 +14,16 @@ Predict.fun uses **Negative Risk (NegRisk) conditional tokens** for categorical 
 
 ---
 
+## 🔧 MCP Tool Governance
+
+To maintain documentation integrity and prevent unverified web requests, AI agents working on this repository must strictly follow these tool guidelines:
+
+- **Documentation Lookup**: Use the **Context7 MCP** server only for technical references, API guides, and code library documents.
+- **Web Research & Source Discovery**: Use the **Exa MCP** server only for scanning public pages, web queries, and active market research.
+- **Session Integrity**: Always update session memory files (`session_memory.md` and `AGENTS.md`) in sync with every code change.
+
+---
+
 ## 📂 Directory Structure
 
 ```text
