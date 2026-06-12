@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Predict.fun Arbitrage & Opportunity Scanner</title>
+    <meta
+      name="description"
+      content="Scanner to find neutral bets and arbitrage opportunities for World Cup 2026 and soccer matches on Predict.fun"
+    />
+
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+    <!-- Background Glows for Aesthetics -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <div class="app-container">
+      <!-- Header -->
+      <header class="app-header">
+        <div class="logo-area">
+          <div class="logo-icon"></div>
+          <div>
+            <h1>PREDICT<span class="highlight">.SCAN</span></h1>
+            <p class="tagline">World Cup & Soccer Opportunity Scanner</p>
+          </div>
+        </div>
+
+        <!-- Network Controls & API Credentials -->
+        <div class="header-controls">
+          <div class="control-group">
+            <label>Network</label>
+            <span class="static-network-badge">BNB Mainnet</span>
+          </div>
+
+          <div class="status-indicator">
+            <div id="status-dot" class="dot dot-idle"></div>
+            <span id="status-text">Ready</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Stats Dashboard Section -->
+      <section class="stats-panel" id="stats-dashboard">
+        <div class="stat-card">
+          <p class="stat-label">Total Categories Scanned</p>
+          <h3 id="stat-total-scanned" class="stat-value">0</h3>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Opportunities Found</p>
+          <h3 id="stat-opportunities-count" class="stat-value highlight-green">0</h3>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Max Arbitrage Profit</p>
+          <h3 id="stat-max-profit" class="stat-value highlight-purple">0.00%</h3>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Last Refreshed</p>
+          <h3 id="stat-last-refresh" class="stat-value">Never</h3>
+        </div>
+      </section>
+
+      <!-- Settings & Filters Controls -->
+      <section class="controls-panel">
+        <!-- Top Row: Search, Markets Tag -->
+        <div class="controls-row-top">
+          <div class="search-box">
+            <input
+              type="text"
+              id="search-filter"
+              class="search-input"
+              placeholder="Search matches (e.g. USA, England, Crystal)..."
+            />
+          </div>
+
+          <div class="filter-item">
+            <label
+              for="category-tag-filter"
+              style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500"
+              >Markets Tag</label
+            >
+            <select id="category-tag-filter" class="select-input-sm" style="min-width: 160px">
+              <option value="14,81,113" selected>Soccer & World Cup</option>
+              <option value="4">All Sports</option>
+              <option value="81">World Cup 2026</option>
+              <option value="14">Soccer Leagues</option>
+              <option value="all">All Markets (Slow)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="controls-divider"></div>
+
+        <!-- Bottom Row: Filters on Left, Real-Time Controls on Right -->
+        <div class="controls-row-bottom">
+          <div class="filters-left">
+            <div class="filter-item">
+              <label for="arbitrage-type-filter">Opportunity Type</label>
+              <select id="arbitrage-type-filter" class="select-input-sm">
+                <option value="all" selected>All (YES & NO)</option>
+                <option value="yes">YES Arbitrage Only</option>
+                <option value="no">NO Arbitrage Only</option>
+              </select>
+            </div>
+
+            <div class="filter-item">
+              <label for="sort-by-filter">Sort By</label>
+              <select id="sort-by-filter" class="select-input-sm">
+                <option value="liquidity" selected>Liquidity Score</option>
+                <option value="profit">Expected Profit %</option>
+              </select>
+            </div>
+
+            <div class="filter-item slider-item" style="min-width: 140px">
+              <div class="slider-label-row">
+                <label for="profit-threshold">Min Profit %</label>
+                <span id="profit-threshold-val" class="slider-value">0.0%</span>
+              </div>
+              <input
+                type="range"
+                id="profit-threshold"
+                class="slider-input"
+                min="-5.0"
+                max="10.0"
+                step="0.1"
+                value="0.0"
+              />
+            </div>
+
+            <div class="filter-item slider-item" style="min-width: 160px">
+              <div class="slider-label-row">
+                <label for="liquidity-threshold">Target Shares</label>
+                <span id="liquidity-threshold-val" class="slider-value">100</span>
+              </div>
+              <input
+                type="range"
+                id="liquidity-threshold"
+                class="slider-input"
+                min="1"
+                max="10000"
+                step="10"
+                value="100"
+              />
+            </div>
+          </div>
+
+          <!-- Real-Time Scanner Settings -->
+          <div class="realtime-controls">
+            <div class="realtime-indicator" id="realtime-status-container">
+              <span class="pulse-icon"></span>
+              <span id="realtime-countdown">Next scan in 10s</span>
+            </div>
+
+            <div class="filter-item">
+              <label
+                for="autoscan-interval"
+                style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500"
+                >Interval</label
+              >
+              <select
+                id="autoscan-interval"
+                class="select-input-sm"
+                style="min-width: 60px; padding: 0.35rem 0.5rem; margin-left: 0.3rem"
+              >
+                <option value="5">5s</option>
+                <option value="10" selected>10s</option>
+                <option value="30">30s</option>
+                <option value="60">60s</option>
+              </select>
+            </div>
+
+            <div class="filter-item toggle-item">
+              <label class="switch-container">
+                <input type="checkbox" id="sound-toggle" />
+                <span class="switch-slider"></span>
+              </label>
+              <label for="sound-toggle" class="toggle-label">🔔 Sound Alerts</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <!-- Opportunities Section -->
+        <section class="opportunities-section">
+          <div class="section-header">
+            <h2>Active Arbitrage Opportunities</h2>
+            <span class="badge" id="opportunities-badge">0 Found</span>
+          </div>
+
+          <div class="opportunities-list" id="opportunities-container">
+            <div class="empty-state">
+              <p>Scanning Predict.fun markets for arbitrage opportunities...</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Scanned Matches Browser (Collapsible/Browser) -->
+        <section class="markets-section">
+          <div class="section-header collapsible-header" id="markets-header">
+            <h2>All Scanned Sports Matches</h2>
+            <span class="badge-neutral" id="total-matches-badge">0 Matches</span>
+          </div>
+
+          <div class="markets-table-container" id="markets-table-container">
+            <table class="markets-table">
+              <thead>
+                <tr>
+                  <th>Match / Category</th>
+                  <th>Outcome / Market</th>
+                  <th>YES Ask (Probability)</th>
+                  <th>NO Ask (Probability)</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="markets-table-body">
+                <tr>
+                  <td colspan="5" class="table-empty">No markets scanned yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </main>
+
+      <!-- Footer -->
+      <footer class="app-footer">
+        <p>
+          Predict.fun Opportunity Scanner | Powered by Predict.fun SDK & Smart Contract Protocol
+        </p>
+        <p class="warning-notice">
+          Trading prediction markets involves financial risk. Arbitrage requires matching orderbook
+          depth; ensure liquidity before placing orders.
+        </p>
+      </footer>
+    </div>
+
+    <!-- JavaScript Entrypoint -->
+    <script src="arbitrage.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
