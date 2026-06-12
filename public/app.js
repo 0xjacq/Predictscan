@@ -37,7 +37,6 @@ const totalMatchesBadge = document.getElementById('total-matches-badge');
 const marketsTableBody = document.getElementById('markets-table-body');
 
 // Real-time DOM Elements
-const autoscanInterval = document.getElementById('autoscan-interval');
 const soundToggle = document.getElementById('sound-toggle');
 const realtimeStatusContainer = document.getElementById('realtime-status-container');
 const realtimeCountdown = document.getElementById('realtime-countdown');
@@ -87,34 +86,41 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Real-time Controls Events
-  autoscanInterval.addEventListener('change', (e) => {
-    appState.realtime.interval = parseInt(e.target.value) || 10;
-    startAutoScan();
-  });
-
   soundToggle.addEventListener('change', (e) => {
     appState.realtime.soundAlert = e.target.checked;
     localStorage.setItem('predict_sound_alert', e.target.checked.toString());
   });
 
-  // Load Saved Auto-Scan Configurations
-  const savedInterval = localStorage.getItem('predict_autoscan_interval') || '10';
-  const savedSound = localStorage.getItem('predict_sound_alert') === 'true';
+  // Load Configurations from Backend Config
+  fetch('/api/config')
+    .then((res) => res.json())
+    .then((config) => {
+      const savedSound = localStorage.getItem('predict_sound_alert') === 'true';
 
-  appState.realtime.enabled = true; // Auto-scan is the only mode
-  autoscanInterval.value = savedInterval;
-  appState.realtime.interval = parseInt(savedInterval);
+      appState.realtime.enabled = true; // Auto-scan is the only mode
+      appState.realtime.interval = config.scanInterval || 10;
+      appState.realtime.remainingSeconds = appState.realtime.interval;
 
-  soundToggle.checked = savedSound;
-  appState.realtime.soundAlert = savedSound;
+      soundToggle.checked = savedSound;
+      appState.realtime.soundAlert = savedSound;
 
-  // Always start auto scan on load
-  setTimeout(() => {
-    startAutoScan();
-  }, 500);
+      // Always start auto scan on load
+      setTimeout(() => {
+        startAutoScan();
+      }, 500);
 
-  // Scan markets immediately when the page is loaded
-  performScan();
+      // Scan markets immediately when the config is loaded
+      performScan();
+    })
+    .catch((err) => {
+      console.error('Failed to load server config:', err);
+      // Fallback defaults
+      appState.realtime.enabled = true;
+      appState.realtime.interval = 10;
+      appState.realtime.remainingSeconds = 10;
+      startAutoScan();
+      performScan();
+    });
 });
 
 // Update UI Connection Status

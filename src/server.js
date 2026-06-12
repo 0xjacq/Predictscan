@@ -13,7 +13,8 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Simple in-memory cache to prevent hitting Predict.fun rate limits (240 req/min)
 const categoryCache = new Map();
-const CACHE_TTL = 10000; // 10 seconds
+const CACHE_TTL_SEC = parseInt(process.env.CACHE_TTL) || 10;
+const CACHE_TTL = CACHE_TTL_SEC * 1000; // Match scan interval config in ms
 
 // Helper to determine active network and API endpoint details
 function getApiConfig(_req) {
@@ -172,6 +173,14 @@ app.get('/api/all-categories', async (req, res) => {
       error: error.response?.data || null
     });
   }
+});
+
+// Exposes the configured scan interval & cache duration (matched) to the frontend
+app.get('/api/config', (_req, res) => {
+  const cacheTtlSec = parseInt(process.env.CACHE_TTL) || 10;
+  res.json({
+    scanInterval: cacheTtlSec
+  });
 });
 
 // Start the server

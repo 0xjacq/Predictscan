@@ -20,7 +20,7 @@ Predict.fun uses **Negative Risk (NegRisk) conditional tokens** for categorical 
   - Computes a dynamic **Liquidity Score (0-100)** incorporating both orderbook depth and average bid-ask spread.
   - Alerts users to **Slippage Risk** if their target share size exceeds the available top-of-book depth.
 - **Real-Time Auto-Scan Engine**:
-  - Polls Predict.fun APIs periodically on a configurable interval (5s, 10s, 30s, 60s).
+  - Polls Predict.fun APIs periodically on a matching interval configured server-side (retrieved from the proxy API).
   - Employs a local API proxy caching mechanism to prevent rate limits and optimize bandwidth.
   - Includes a custom synthesized Web Audio chime alert when new arbitrage opportunities are found.
 - **Modern Responsive Dashboard**:
@@ -113,7 +113,7 @@ Start the server in development mode. The server will launch on port `3000` by d
 npm run dev
 ```
 
-Navigate to `http://localhost:3000` in your web browser. The scanner will run an automatic scan immediately on page load and periodically scan based on the selected interval.
+Navigate to `http://localhost:3000` in your web browser. The scanner will run an automatic scan immediately on page load and periodically scan based on the `CACHE_TTL` interval configured in the server's `.env` file.
 
 ### Production Mode
 

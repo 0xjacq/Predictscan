@@ -84,13 +84,13 @@ Calculated across all legs of the arbitrage to determine overall trade viability
 
 ### Development and Quality Tools
 
-| Command | Purpose |
-|---------|---------|
-| `npm install` | Install all backend and development dependencies |
+| Command                     | Purpose                                                    |
+| --------------------------- | ---------------------------------------------------------- |
+| `npm install`               | Install all backend and development dependencies           |
 | `npm start` / `npm run dev` | Launch the Express proxy server on `http://localhost:3000` |
-| `npm test` | Run Jest unit tests for the arbitrage math engine |
-| `npm run lint` | Run ESLint check for style guide and code quality |
-| `npm run format` | Run Prettier formatter to auto-format files |
+| `npm test`                  | Run Jest unit tests for the arbitrage math engine          |
+| `npm run lint`              | Run ESLint check for style guide and code quality          |
+| `npm run format`            | Run Prettier formatter to auto-format files                |
 
 ---
 

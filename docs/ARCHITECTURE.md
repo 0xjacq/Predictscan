@@ -44,8 +44,8 @@ All arbitrage logic, naming rules, and formatting math are contained in `public/
 
 Handles all user interactions, range slider event coordination, polling loops, audio chime synthesizers, and DOM rendering.
 
-- **Interval Polling**: Automatically triggers an auto-scan cycle at user-defined intervals (5s, 10s, 30s, 60s) via `setInterval`.
-- **Persistent State**: The user's preferences (Sort by, Min Profit %, Target Shares, chime toggle, auto-scan interval) are persisted to browser `localStorage`.
+- **Interval Polling**: Automatically triggers an auto-scan cycle at the matched cache/scan interval configured server-side (retrieved from `/api/config`) via `setInterval`.
+- **Persistent State**: The user's preferences (Sort by, Min Profit %, Target Shares, chime toggle) are persisted to browser `localStorage`.
 - **Web Audio Chime**: Synthesizes audio tones using the browser's native Web Audio API directly in real-time, removing the need to fetch external `.mp3` assets.
 
 ---
