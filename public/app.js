@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Update UI Connection Status
 function setStatus(status, text) {
+  if (!statusDot || !statusText) return;
   statusDot.className = 'dot';
   if (status === 'idle') {
     statusDot.classList.add('dot-idle');
