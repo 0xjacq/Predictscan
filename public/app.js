@@ -18,7 +18,8 @@ let appState = {
     soundAlert: false,
     countdownTimerId: null,
     remainingSeconds: 0,
-    previousOppsKeys: new Set()
+    previousOppsKeys: new Set(),
+    isFirstScan: true
   }
 };
 
@@ -300,6 +301,13 @@ function checkNewOpportunitiesAlert() {
       newlyDiscoveredOpps.push(opp);
     }
   });
+
+  // If this is the first launch/scan, populate the list keys but do NOT trigger any sounds or popups
+  if (appState.realtime.isFirstScan) {
+    appState.realtime.isFirstScan = false;
+    appState.realtime.previousOppsKeys = newKeys;
+    return;
+  }
 
   // Update saved history
   appState.realtime.previousOppsKeys = newKeys;
