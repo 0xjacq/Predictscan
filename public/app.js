@@ -239,6 +239,14 @@ function showToastNotification(opp) {
   const toast = document.createElement('div');
   toast.className = `toast toast-${opp.type.replace(/_/g, '-')}`;
 
+  const targetId =
+    opp.type === 'binary'
+      ? `opp-card-binary-${opp.categorySlug}-${opp.marketId}`
+      : `opp-card-${opp.type}-${opp.categorySlug}`;
+
+  toast.setAttribute('data-target-id', targetId);
+  toast.style.cursor = 'pointer';
+
   const typeLabels = {
     binary: 'Binary Arbitrage (YES + NO)',
     yes_neg_risk: 'Negative Risk YES Arbitrage',
@@ -250,15 +258,39 @@ function showToastNotification(opp) {
   toast.innerHTML = `
     <div class="toast-header">
       <span>${typeLabel}</span>
-      <button class="toast-close">&times;</button>
+      <button class="toast-close" style="z-index: 10;">&times;</button>
     </div>
     <div class="toast-title">${opp.categoryTitle}</div>
     ${opp.marketTitle ? `<div class="toast-meta">${opp.marketTitle}</div>` : ''}
     <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
       <span class="toast-profit">+${opp.profitPct.toFixed(2)}% Net Profit</span>
-      <a href="https://predict.fun/market/${opp.categorySlug}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.85rem;">Trade ↗</a>
+      <a href="https://predict.fun/market/${opp.categorySlug}" target="_blank" class="toast-trade-link" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.85rem; z-index: 10;">Trade ↗</a>
     </div>
   `;
+
+  // Attach click handler to toast card (for scrolling)
+  toast.addEventListener('click', (e) => {
+    // If close button or trade link was clicked, don't scroll
+    if (
+      e.target.classList.contains('toast-close') ||
+      e.target.classList.contains('toast-trade-link')
+    ) {
+      return;
+    }
+
+    const targetEl = document.getElementById(targetId);
+    if (targetEl) {
+      targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+      // Flash highlight animation
+      targetEl.classList.remove('highlight-flash');
+      void targetEl.offsetWidth; // Trigger reflow to restart animation
+      targetEl.classList.add('highlight-flash');
+      setTimeout(() => {
+        targetEl.classList.remove('highlight-flash');
+      }, 1500);
+    }
+  });
 
   // Attach close event listener
   const closeBtn = toast.querySelector('.toast-close');
@@ -453,6 +485,10 @@ function renderOpportunities() {
   filtered.forEach((opp) => {
     const card = document.createElement('div');
     card.className = 'opp-card';
+    card.id =
+      opp.type === 'binary'
+        ? `opp-card-binary-${opp.categorySlug}-${opp.marketId}`
+        : `opp-card-${opp.type}-${opp.categorySlug}`;
 
     // Header section
     const oppTypeName =

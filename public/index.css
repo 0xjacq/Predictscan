@@ -1048,3 +1048,21 @@ input:checked ~ .toggle-label {
     opacity: 1;
   }
 }
+
+/* Highlight Flash Animation for Opportunity Cards */
+.opp-card.highlight-flash {
+  animation: flashHighlight 1.5s ease-out;
+}
+
+@keyframes flashHighlight {
+  0% {
+    background: rgba(138, 43, 226, 0.35);
+    box-shadow: 0 0 24px rgba(138, 43, 226, 0.5);
+    border-color: var(--primary);
+  }
+  100% {
+    background: var(--bg-card);
+    box-shadow: none;
+    border-color: var(--border-color);
+  }
+}
