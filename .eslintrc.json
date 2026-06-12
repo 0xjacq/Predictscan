@@ -1,0 +1,43 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2021": true,
+    "node": true,
+    "jest": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": "latest"
+  },
+  "globals": {
+    "appState": "writable",
+    "ArbCalculator": "readonly",
+    "statusDot": "readonly",
+    "statusText": "readonly",
+    "searchFilter": "readonly",
+    "arbitrageTypeFilter": "readonly",
+    "sortByFilter": "readonly",
+    "categoryTagFilter": "readonly",
+    "profitThreshold": "readonly",
+    "liquidityThreshold": "readonly",
+    "opportunitiesContainer": "readonly",
+    "opportunitiesBadge": "readonly",
+    "totalMatchesBadge": "readonly",
+    "marketsTableBody": "readonly",
+    "autoscanInterval": "readonly",
+    "soundToggle": "readonly",
+    "realtimeStatusContainer": "readonly",
+    "realtimeCountdown": "readonly",
+    "statTotalScanned": "readonly",
+    "statOpportunitiesCount": "readonly",
+    "statMaxProfit": "readonly",
+    "statLastRefresh": "readonly"
+  },
+  "rules": {
+    "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+    "no-console": "off",
+    "semi": ["error", "always"],
+    "quotes": ["error", "single", { "avoidEscape": true }]
+  }
+}
