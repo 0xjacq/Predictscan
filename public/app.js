@@ -231,10 +231,63 @@ function playAlertSound() {
   }
 }
 
+function showToastNotification(opp) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${opp.type.replace(/_/g, '-')}`;
+
+  const typeLabels = {
+    binary: 'Binary Arbitrage (YES + NO)',
+    yes_neg_risk: 'Negative Risk YES Arbitrage',
+    no_neg_risk: 'Negative Risk NO Arbitrage'
+  };
+
+  const typeLabel = typeLabels[opp.type] || 'Arbitrage Opportunity';
+
+  toast.innerHTML = `
+    <div class="toast-header">
+      <span>${typeLabel}</span>
+      <button class="toast-close">&times;</button>
+    </div>
+    <div class="toast-title">${opp.categoryTitle}</div>
+    ${opp.marketTitle ? `<div class="toast-meta">${opp.marketTitle}</div>` : ''}
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.25rem;">
+      <span class="toast-profit">+${opp.profitPct.toFixed(2)}% Net Profit</span>
+      <a href="https://predict.fun/market/${opp.categorySlug}" target="_blank" style="color: var(--primary); font-weight: 600; text-decoration: none; font-size: 0.85rem;">Trade ↗</a>
+    </div>
+  `;
+
+  // Attach close event listener
+  const closeBtn = toast.querySelector('.toast-close');
+  closeBtn.addEventListener('click', () => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(100%)';
+    setTimeout(() => {
+      toast.remove();
+    }, 500);
+  });
+
+  container.appendChild(toast);
+
+  // Auto remove after 6 seconds
+  setTimeout(() => {
+    if (toast.parentNode) {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        toast.remove();
+      }, 500);
+    }
+  }, 6000);
+}
+
 function checkNewOpportunitiesAlert() {
   const currentFiltered = getFilteredOpportunities();
   let playAlert = false;
   const newKeys = new Set();
+  const newlyDiscoveredOpps = [];
 
   currentFiltered.forEach((opp) => {
     // Unique key including category, type, and profit percentage (rounded to 3 decimals to avoid tiny float differences triggering beeps)
@@ -244,15 +297,22 @@ function checkNewOpportunitiesAlert() {
     // Play alert if this is a new opportunity
     if (!appState.realtime.previousOppsKeys.has(key)) {
       playAlert = true;
+      newlyDiscoveredOpps.push(opp);
     }
   });
 
   // Update saved history
   appState.realtime.previousOppsKeys = newKeys;
 
-  // Trigger chime if enabled and new opportunities exist
-  if (playAlert && appState.realtime.soundAlert && currentFiltered.length > 0) {
-    playAlertSound();
+  // Trigger chime and show popup if enabled and new opportunities exist
+  if (playAlert && currentFiltered.length > 0) {
+    if (appState.realtime.soundAlert) {
+      playAlertSound();
+    }
+    // Show toast popups for newly discovered opportunities
+    newlyDiscoveredOpps.forEach((opp) => {
+      showToastNotification(opp);
+    });
   }
 }
 
