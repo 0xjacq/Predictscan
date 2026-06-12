@@ -75,6 +75,7 @@ describe('ArbCalculator', () => {
         {
           title: 'Brazil vs. Morocco',
           slug: 'fifwc-bra-mar-2026-06-13',
+          startsAt: '2026-06-13T04:45:00.000Z',
           markets: [
             {
               id: 1,
@@ -105,6 +106,7 @@ describe('ArbCalculator', () => {
       expect(opps[0].type).toBe('binary');
       expect(opps[0].profitPct).toBeCloseTo(5.26, 1); // 1.00 / 0.95 - 1 = 5.26%
       expect(opps[0].liquidity).toBe(500);
+      expect(opps[0].startsAt).toBe('2026-06-13T04:45:00.000Z');
     });
 
     test('calculates YES Negative Risk Arbitrage correctly', () => {

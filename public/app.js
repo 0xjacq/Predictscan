@@ -462,10 +462,30 @@ function renderOpportunities() {
           ? 'YES Negative Risk Arbitrage'
           : 'NO Negative Risk Arbitrage';
 
+    let startBadgeHtml = '';
+    if (opp.startsAt) {
+      try {
+        const start = new Date(opp.startsAt);
+        const formatted = start.toLocaleString(undefined, {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        startBadgeHtml = `<span class="badge-neutral" style="background: rgba(255, 255, 255, 0.05); color: var(--text-main); font-weight: 500;"><span style="margin-right: 4px;">📅</span>Starts: ${formatted}</span>`;
+      } catch (e) {
+        console.error('Failed to parse startsAt:', e);
+      }
+    }
+
     const headerHtml = `
       <div class="opp-header">
         <div class="opp-meta">
-          <span class="badge-neutral">${oppTypeName}</span>
+          <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.4rem;">
+            <span class="badge-neutral">${oppTypeName}</span>
+            ${startBadgeHtml}
+          </div>
           <h3 class="opp-title">${opp.categoryTitle}</h3>
           <span class="opp-slug">Category: ${opp.categorySlug}</span>
         </div>
