@@ -68,6 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   categoryTagFilter.addEventListener('change', (e) => {
     appState.filters.tagIds = e.target.value;
+    appState.realtime.isFirstScan = true;
     performScan();
   });
 
@@ -317,19 +318,19 @@ function showToastNotification(opp) {
 }
 
 function checkNewOpportunitiesAlert() {
-  const currentFiltered = getFilteredOpportunities();
-  let playAlert = false;
+  // Use all calculated opportunities (unfiltered) to determine new matches.
+  // This prevents UI filter adjustments (e.g. min profit, search) from triggering popups on subsequent scans.
+  const allOpps = appState.opportunities || [];
   const newKeys = new Set();
   const newlyDiscoveredOpps = [];
 
-  currentFiltered.forEach((opp) => {
+  allOpps.forEach((opp) => {
     // Unique key including category, type, and profit percentage (rounded to 3 decimals to avoid tiny float differences triggering beeps)
     const key = `${opp.categorySlug}_${opp.type}_${opp.profitPct.toFixed(3)}`;
     newKeys.add(key);
 
     // Play alert if this is a new opportunity
     if (!appState.realtime.previousOppsKeys.has(key)) {
-      playAlert = true;
       newlyDiscoveredOpps.push(opp);
     }
   });
@@ -344,13 +345,24 @@ function checkNewOpportunitiesAlert() {
   // Update saved history
   appState.realtime.previousOppsKeys = newKeys;
 
+  // Filter the newly discovered opportunities against active filters before alerting
+  const currentFiltered = getFilteredOpportunities();
+  const currentFilteredKeys = new Set(
+    currentFiltered.map((opp) => `${opp.categorySlug}_${opp.type}_${opp.profitPct.toFixed(3)}`)
+  );
+
+  const filteredNewOpps = newlyDiscoveredOpps.filter((opp) => {
+    const key = `${opp.categorySlug}_${opp.type}_${opp.profitPct.toFixed(3)}`;
+    return currentFilteredKeys.has(key);
+  });
+
   // Trigger chime and show popup if enabled and new opportunities exist
-  if (playAlert && currentFiltered.length > 0) {
+  if (filteredNewOpps.length > 0) {
     if (appState.realtime.soundAlert) {
       playAlertSound();
     }
     // Show toast popups for newly discovered opportunities
-    newlyDiscoveredOpps.forEach((opp) => {
+    filteredNewOpps.forEach((opp) => {
       showToastNotification(opp);
     });
   }

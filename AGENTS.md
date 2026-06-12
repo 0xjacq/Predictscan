@@ -163,3 +163,10 @@ To prevent World Cup matches (with `fifwc-` in their slugs) from bleeding into d
   - **Soccer Leagues** shows only matches excluding the World Cup criteria.
   - **Soccer & World Cup** displays both.
 
+### 10. Alert/Popup Flood Prevention
+
+To prevent a flood of toast notifications and sound alerts when loading a new category or when the scanner transitions from an empty state to having multiple active opportunities:
+
+- **First Scan Initialization**: The system flags the very first scan after page load or after a change to the `Markets Tag` selector as an initialization scan (`isFirstScan = true`). During this scan, opportunity keys are tracked to populate memory history, but chime alerts and toast popups are bypassed.
+- **UI Filter Decoupling**: Newly discovered opportunities are tracked using keys derived from the unfiltered list (`appState.opportunities`). This ensures that adjusting sliders (e.g. Min Profit %, Target Shares) or typing search queries does not cause the system to identify existing opportunities as "new" on subsequent scans. Active filters are only applied client-side to decide whether to render the popup for a genuinely new event.
+

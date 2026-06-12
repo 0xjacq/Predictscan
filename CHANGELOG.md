@@ -17,6 +17,7 @@ This release focuses on transitioning the repository to production-grade reposit
 - **Developer Tooling**: Configured `.eslintrc.json`, `.eslintignore`, `.prettierrc`, `.prettierignore`, and `.gitignore`.
 - **Open Source Documentation**: Added [README.md](file:///Users/joe/Dev/Betfarm/README.md), [CONTRIBUTING.md](file:///Users/joe/Dev/Betfarm/CONTRIBUTING.md), [CHANGELOG.md](file:///Users/joe/Dev/Betfarm/CHANGELOG.md), and [docs/ARCHITECTURE.md](file:///Users/joe/Dev/Betfarm/docs/ARCHITECTURE.md).
 - **World Cup & Soccer Segregation**: Added client-side post-filtering and classification in `ArbCalculator` to isolate World Cup games (starts with `fifwc-` in slug or contains `world-cup`/`world cup`) from Soccer Leagues filters.
+- **Alert Flood Prevention**: Added reset logic to skip notifications on initial category scan, and decoupled alert key tracking from client-side UI filters by matching against the unfiltered opportunities list.
 
 ### Changed
 
